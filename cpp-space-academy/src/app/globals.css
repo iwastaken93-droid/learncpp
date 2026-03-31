@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --color-slate-950: #020617;
+  --color-slate-900: #0f172a;
+  --color-slate-800: #1e293b;
+  --color-indigo-500: #6366f1;
+  --color-indigo-400: #818cf8;
+  --color-purple-500: #a855f7;
+  --color-purple-400: #c084fc;
+}
+
+@layer base {
+  body {
+    background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #020617 70%);
+    background-attachment: fixed;
+  }
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.2; }
+  50% { opacity: 1; }
+  100% { opacity: 0.2; }
+}
+
+.star {
+  /* Animation is applied inline in Starfield.tsx */
+}
