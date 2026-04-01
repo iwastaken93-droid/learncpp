@@ -2,8 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
-    "install": "cd cpp-space-academy && npm install",
-    "build": "cd cpp-space-academy && npm run build",
+    "build": "cd cpp-space-academy && npm install && npm run build",
     "start": "cd cpp-space-academy && npm start"
   }
 }
