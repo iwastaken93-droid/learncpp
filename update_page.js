@@ -1,3 +1,13 @@
+const fs = require('fs');
+
+const path = 'cpp-space-academy/src/app/academy/[planetSlug]/lesson/[lessonSlug]/page.tsx';
+let content = fs.readFileSync(path, 'utf8');
+
+// The logic inside content.split('\n').map needs to parse code blocks properly.
+// A code block spans multiple lines starting with ``` and ending with ```.
+// The current logic only checks if a single paragraph starts with ```.
+
+const newContent = `
 "use client";
 
 import { notFound, useRouter, useParams } from "next/navigation";
@@ -30,34 +40,34 @@ export default function LessonPage() {
     }
 
     if (nextLesson) {
-      router.push(`/academy/${planet.slug}/lesson/${nextLesson.slug}`);
+      router.push(\`/academy/\${planet.slug}/lesson/\${nextLesson.slug}\`);
     } else if (planet.project) {
-      router.push(`/academy/${planet.slug}/project/${planet.project.slug}`);
+      router.push(\`/academy/\${planet.slug}/project/\${planet.project.slug}\`);
     } else if (planet.quiz) {
-      router.push(`/academy/${planet.slug}/quiz`);
+      router.push(\`/academy/\${planet.slug}/quiz\`);
     } else {
       router.push('/academy');
     }
   };
 
   // Process the markdown-like content into blocks
-  const lines = lesson.content.split('\n');
+  const lines = lesson.content.split('\\n');
   const blocks = [];
   let currentBlockType = 'text';
   let currentBlockContent = [];
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    if (line.startsWith('```')) {
+    if (line.startsWith('\`\`\`')) {
       if (currentBlockType === 'code') {
         // End of code block
-        blocks.push({ type: 'code', content: currentBlockContent.join('\n') });
+        blocks.push({ type: 'code', content: currentBlockContent.join('\\n') });
         currentBlockContent = [];
         currentBlockType = 'text';
       } else {
         // Start of code block
         if (currentBlockContent.length > 0) {
-           blocks.push({ type: 'text', content: currentBlockContent.join('\n') });
+           blocks.push({ type: 'text', content: currentBlockContent.join('\\n') });
            currentBlockContent = [];
         }
         currentBlockType = 'code';
@@ -67,7 +77,7 @@ export default function LessonPage() {
     }
   }
   if (currentBlockContent.length > 0) {
-    blocks.push({ type: currentBlockType, content: currentBlockContent.join('\n') });
+    blocks.push({ type: currentBlockType, content: currentBlockContent.join('\\n') });
   }
 
   return (
@@ -105,12 +115,12 @@ export default function LessonPage() {
             }
 
             // Text blocks
-            return block.content.split('\n').map((paragraph, j) => {
+            return block.content.split('\\n').map((paragraph, j) => {
               if (!paragraph.trim()) return null;
               if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
-                  return <h3 key={`${i}-${j}`} className="text-white font-bold text-2xl mt-8">{paragraph.replace(/\*\*/g, '')}</h3>;
+                  return <h3 key={\`\${i}-\${j}\`} className="text-white font-bold text-2xl mt-8">{paragraph.replace(/\\*\\*/g, '')}</h3>;
               }
-              return <p key={`${i}-${j}`} dangerouslySetInnerHTML={{ __html: paragraph.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/`(.*?)`/g, '<code class="bg-slate-800 text-indigo-300 px-1 py-0.5 rounded">$1</code>') }}></p>;
+              return <p key={\`\${i}-\${j}\`} dangerouslySetInnerHTML={{ __html: paragraph.replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>').replace(/\`(.*?)\`/g, '<code class="bg-slate-800 text-indigo-300 px-1 py-0.5 rounded">$1</code>') }}></p>;
             });
           })}
         </div>
@@ -152,3 +162,7 @@ export default function LessonPage() {
     </div>
   );
 }
+`;
+
+fs.writeFileSync(path, newContent.trim() + '\n');
+console.log("Successfully updated page.tsx");
